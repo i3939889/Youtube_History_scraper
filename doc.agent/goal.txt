@@ -1,0 +1,5 @@
+目標: 抓取登入後的youtube觀看紀錄 取得url與字幕檔 存入json檔提供其他程式使用
+方式: 使用python selenium 或是 playwright 模擬登入youtube 抓取觀看紀錄
+輸入: 帳號密碼 或是使用cookie 模擬登入
+輸出: json檔 包含url與字幕檔與觀看時間
+

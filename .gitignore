@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Project Data (Cookies, Passwords, Output JSON)
+data/
+*.sqlite
+temp_cookies.sqlite
+playwright_profile/
+
+# VS Code / IDE settings
+.vscode/
+.idea/
+*.swp
+
+# Playwright
+test-results/
+
+# Mac OS
+.DS_Store
