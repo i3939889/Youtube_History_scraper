@@ -91,3 +91,13 @@ cp .env.example .env
 ## 📝 關於字幕下載補充說明
 本腳本的主要任務為「取得歷史觀看清單與其 URL URL」。因為 YouTube 更改了資料流載入機制，**歷史紀錄列表頁面不會預先加載 timedtext 字幕檔**。
 如果您需要下載這批影片的字幕，強烈建議您撰寫一支簡單的腳本，透過將產出之 `history_dataset.json` 餵給 `yt-dlp` 或 `youtube-transcript-api` (Python套件)，便可安全且極速地完成大量字幕的批次下載。
+
+---
+
+## ✒️ 專案開發落款
+本系統架構、反爬蟲策略配置與文件，均由 **Google DeepMind - Antigravity (Agentic AI)** 協助設計與開發。
+- 核心語言與框架：Python 3.10+ & Playwright
+- 自動化架構：Antigravity Agentic Coding Assistant
+- 開發目標鎖定：KISS (保持簡單)、DRY (不重工) 與高可攜性
+
+> ⚠️ 請避免使用其他不支援 Playwright 或完整 Python 非同步架構的輔助工具直接修改此專案核心邏輯 (`scraper.py` 與 `main.py`)，以免破壞精心配置的 `Persistent Context` 與 Firefox Cookie 提取防護機制。
