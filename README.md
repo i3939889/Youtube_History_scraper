@@ -57,6 +57,19 @@ cp .env.example .env
 
 完成後，專案目錄中將會產生 `data/session/playwright_profile` 目錄存放您的登入狀態。
 
+### 👉 進階使用：`--profile` 多重設定檔支援
+若您需要管理多個 YouTube 帳號，或指定不同的本機設定庫，您可以在上述所有指令尾端加上 `--profile [您的命名]`。
+
+- **針對 Chrome (`--profile 任意名稱`)**：
+  腳本會在 `data/session/` 下創建一個獨立的 `playwright_profile_任意名稱` 資料夾。
+  **(⚠️ 問：為什麼不能直接用我平常上網的 Chrome Profile？)**
+  > 答：因為瀏覽器運行時會「鎖死」資料庫檔案。如果直接指定您的預設 Profile，爬蟲啟動前您必須完全關閉日常使用的 Chrome。加上 Windows 系統對 Chrome 核心 Cookie 採用了綁定程序的 DPAPI 加密，導致 Playwright 無法直接解密本機登入狀態。因此「花 1 分鐘在獨立視窗登入一次存檔」是業界兼顧不干擾日常使用與 100% 穩定爬取的最優解。
+
+- **針對 Firefox (`--profile 本機端資料夾關鍵字`)**：
+  腳本預設會尋找 Firefox 系統目錄下包含 `.default-release` 的主設定檔。如果您的 Firefox 有多個設定檔（您可在 Firefox 網址列輸入 `about:profiles` 查看），您可以將設定檔資料夾的獨特名稱傳入，例如 `--profile workxyz`，程式將自動找出包含該字串的 SQLite 資料庫來進行提取。
+
+---
+
 ### 第二步：自動爬取觀看紀錄 (Scrape)
 在取得登入狀態後，無論是在本機還是將專案打包到 Linux 伺服器上，都能以自動化的方式執行。（伺服器端建議在 `.env` 設定 `HEADLESS=True`）。
 

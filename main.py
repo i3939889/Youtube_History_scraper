@@ -26,7 +26,7 @@ from src.data_handler import save_to_json, load_existing_json
 # 載入 .env 變數
 load_dotenv()
 
-async def _extract_firefox_cookie(session_dir: str):
+async def _extract_firefox_cookie(session_dir: str, profile_name: str = ""):
     """提取 Firefox 本機 Cookie"""
     # Firefox 較難繞過自動化偵測，這裡改採直接讀取本機 Firefox 的 cookies.sqlite
     print("啟動 Firefox Cookie 提取模式... 準備讀取您的本機 Firefox 登入狀態。")
@@ -46,11 +46,20 @@ async def _extract_firefox_cookie(session_dir: str):
     # 尋找有 youtube cookies 的目錄
     target_db = None
     for p in os.listdir(firefox_profiles_dir):
-        if p.endswith('.default-release') or p.endswith('.default'):
-            db_path = os.path.join(firefox_profiles_dir, p, 'cookies.sqlite')
-            if os.path.exists(db_path):
-                target_db = db_path
-                break
+        if profile_name:
+            # 如果使用者有指定 profile，就比對資料夾名稱
+            if profile_name.lower() in p.lower():
+                db_path = os.path.join(firefox_profiles_dir, p, 'cookies.sqlite')
+                if os.path.exists(db_path):
+                    target_db = db_path
+                    break
+        else:
+            # 沒指定的話，尋找預設的 default-release
+            if p.endswith('.default-release') or p.endswith('.default'):
+                db_path = os.path.join(firefox_profiles_dir, p, 'cookies.sqlite')
+                if os.path.exists(db_path):
+                    target_db = db_path
+                    break
                 
     if not target_db:
         print("❌ 找不到 Firefox 的 Cookie 資料庫 (cookies.sqlite)。")
@@ -146,13 +155,13 @@ async def _extract_chrome_cookie(session_dir: str, headless: bool):
         await context.close()
         print(f"✅ 登入狀態已永久保存至：{session_dir}，後續可直接使用自動爬取模式。")
 
-async def run_extract_cookie_mode(session_dir: str, headless: bool, browser_type: str = "chrome"):
+async def run_extract_cookie_mode(session_dir: str, headless: bool, browser_type: str = "chrome", profile_name: str = ""):
     """
     新建一個獨立的瀏覽器設定檔讓使用者手動登入 YouTube。
     下次程式執行時，只要載入同一個設定檔，就會持續保持登入狀態。
     """
     if browser_type == "firefox":
-        await _extract_firefox_cookie(session_dir)
+        await _extract_firefox_cookie(session_dir, profile_name)
     else:
         await _extract_chrome_cookie(session_dir, headless)
 
@@ -287,10 +296,21 @@ def main():
         help="使用的瀏覽器引擎，可選 chrome 或 firefox。"
     )
     
+    parser.add_argument(
+        "--profile",
+        type=str,
+        default="",
+        help="指定設定檔名稱。對於 Chrome，將作為獨立會話資料夾的後綴；對 Firefox 則是指定本機 Profile 的資料夾名稱關鍵字。"
+    )
+    
     args = parser.parse_args()
     
-    # 用資料夾來放 persistent profile
-    session_dir = os.path.join(os.getcwd(), "data", "session", "playwright_profile")
+    # 用資料夾來放 persistent profile，支援多開設定檔
+    if args.profile:
+        session_dir = os.path.join(os.getcwd(), "data", "session", f"playwright_profile_{args.profile}")
+    else:
+        session_dir = os.path.join(os.getcwd(), "data", "session", "playwright_profile")
+        
     headless_env = os.getenv("HEADLESS", "False").lower() == "true"
     
     # 如果是登入模式，強制開啟瀏覽器介面
@@ -298,7 +318,7 @@ def main():
 
     # 根據不同模式呼叫對應的非同步函式
     if args.mode == "extract-cookie":
-        asyncio.run(run_extract_cookie_mode(session_dir, headless, args.browser))
+        asyncio.run(run_extract_cookie_mode(session_dir, headless, args.browser, args.profile))
     else:
         asyncio.run(run_scrape_mode(session_dir, headless, args.browser))
 
