@@ -12,6 +12,7 @@
 - `src/data_handler.py`: JSON 讀寫與基本容錯。
 - `src/auth.py`: storage state 讀寫 helper，目前主流程多半直接在 `main.py` 處理。
 - `src/utils.py`: 目前幾乎是空檔。
+- 輸出改為每日檔案：`data/output/daily/YYYY-MM-DD.json`。去重只針對當天檔案，不跨天去重。
 
 ## 已確認
 - `python -m py_compile main.py src/auth.py src/scraper.py src/data_handler.py src/utils.py` 通過。

@@ -13,6 +13,7 @@ import sqlite3
 import shutil
 import asyncio
 import argparse
+from datetime import date
 
 # 強制將 Windows 終端機輸出設為 UTF-8，避免 emoji 報錯 (cp950)
 if sys.stdout.encoding.lower() != 'utf-8':
@@ -230,7 +231,8 @@ async def run_scrape_mode(session_dir: str, headless: bool, browser_type: str = 
         
         # 準備輸出儲存路徑
         from urllib.parse import urlparse, parse_qs
-        output_path = os.path.join(os.getcwd(), "data", "output", "history_dataset.json")
+        output_filename = f"{date.today().isoformat()}.json"
+        output_path = os.path.join(os.getcwd(), "data", "output", "daily", output_filename)
         
         # 載入現存的資料庫以防止重複抓取
         existing_data = load_existing_json(output_path)
