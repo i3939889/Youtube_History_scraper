@@ -20,7 +20,11 @@ if sys.stdout.encoding.lower() != 'utf-8':
 
 from dotenv import load_dotenv
 from playwright.async_api import async_playwright
-from src.scraper import handle_response, scroll_to_load_more, extract_history_items
+from src.scraper import (
+    handle_response,
+    scroll_to_load_more,
+    extract_history_items,
+)
 from src.data_handler import save_to_json, load_existing_json
 
 # 載入 .env 變數
